@@ -25,13 +25,19 @@ export class FakeUsersRepository implements UsersRepository {
     return user
   }
 
-  async create(data: Prisma.UserCreateInput) {
+  async create(data: Prisma.UserUncheckedCreateInput) {
     const user = {
       id: randomUUID(),
-      name: data.name,
+      username: data.username,
       email: data.email,
-      password_hash: data.password_hash,
-      created_at: new Date(),
+      passwordHash: data.passwordHash,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      avatarUrl: null,
+      xp: 0,
+      gold: 0,
+      companyId: '1',
+      role: data.role || 'user'
     }
 
     this.items.push(user)
