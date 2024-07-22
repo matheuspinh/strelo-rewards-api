@@ -15,6 +15,7 @@ async function main() {
           email: 'admin@admin.com',
           passwordHash: password_hash,
           username: 'admin',
+          role: 'admin',
         }
       },
       description: 'A company that helps other companies to grow',
