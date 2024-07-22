@@ -12,7 +12,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
 
   const service = makeAuthenticateService()
   const user = await service.execute({ email, password })
-  const token = await reply.jwtSign({ id: user.id })
+  const token = await reply.jwtSign({ id: user.id }, { expiresIn: '12h' })
 
   return reply.status(200).send({
     token,
