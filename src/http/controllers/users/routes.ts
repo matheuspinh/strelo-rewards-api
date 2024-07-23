@@ -4,6 +4,6 @@ import { register } from '@/http/controllers/users/register'
 import { authenticate } from './authenticate'
 
 export async function usersRoutes(app: FastifyInstance) {
-  app.post('/users', register)
-  app.post('/users/login', authenticate)
+  app.post('/api/auth/register', register)
+  app.post('/api/auth/login', authenticate)
 }

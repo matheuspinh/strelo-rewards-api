@@ -20,6 +20,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
       email: user.email,
       username: user.username,
       role: user.role,
+      id: user.id,
     }
   })
 }
