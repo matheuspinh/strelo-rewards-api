@@ -9,9 +9,10 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     email: z.string().email(),
     password: z.string().min(6),
     companyId: z.string(),
+    role: z.string().optional(),
   })
 
-  const { username, email, password, companyId } = registerBodySchema.parse(request.body)
+  const { username, email, password, companyId, role } = registerBodySchema.parse(request.body)
 
   try {
     const registerService = makeRegisterService()
@@ -20,7 +21,8 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
       email,
       username,
       password,
-      companyId
+      companyId,
+      role: role || 'user',
     })
   } catch (error) {
     if (error instanceof UserAlreadyExistsError) {
