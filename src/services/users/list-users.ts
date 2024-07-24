@@ -21,7 +21,8 @@ export class ListUsersService {
     }
 
     const users = await (await this.usersRepository.listByCompanyId(data.companyId)).filter((user) => user.id !== data.userId)
+    const userCount = users.length
 
-    return users
+    return { users, userCount }
   }
 }

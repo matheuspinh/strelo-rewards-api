@@ -44,7 +44,7 @@ describe('List Users Service', () => {
       role: 'admin'
     })
 
-    const users = await sut.execute({
+    const { users } = await sut.execute({
       companyId: adminUser.companyId,
       userId: adminUser.id
     })
@@ -61,12 +61,29 @@ describe('List Users Service', () => {
       role: 'admin'
     })
 
-    const users = await sut.execute({
+    const { users } = await sut.execute({
       companyId: adminUser.companyId,
       userId: adminUser.id
     })
 
     expect(users).toHaveLength(1)
+  })
+
+  it('should count the users correctly', async () => {
+    const { user: adminUser } = await registerService.execute({
+      email: 'admin@email.com',
+      username: 'admin',
+      password: '123456',
+      companyId: 'company-id',
+      role: 'admin'
+    })
+
+    const { userCount } = await sut.execute({
+      companyId: adminUser.companyId,
+      userId: adminUser.id
+    })
+
+    expect(userCount).toEqual(2)
   })
 
   it('should not be able to list users from a company that the user is not admin', async () => {
