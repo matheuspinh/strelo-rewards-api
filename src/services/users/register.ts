@@ -9,6 +9,7 @@ interface RegisterServiceRequest {
   password: string
   companyId: string
   role?: string
+  avatarUrl?: string
 }
 
 interface RegisterServiceResponse {
@@ -22,7 +23,8 @@ export class RegisterService {
     username,
     password,
     companyId,
-    role
+    role,
+    avatarUrl
   }: RegisterServiceRequest): Promise<RegisterServiceResponse> {
     const password_hash = await hash(password, 6)
 
@@ -38,6 +40,7 @@ export class RegisterService {
       passwordHash: password_hash,
       companyId,
       role: role || 'user',
+      avatarUrl: avatarUrl || null
     })
 
     return {
