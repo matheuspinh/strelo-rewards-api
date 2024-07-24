@@ -9,3 +9,9 @@ export class InvalidCredentialsError extends Error {
     super('E-mail e/ou senha incorretos.')
   }
 }
+
+export class UserUnauthorizedError extends Error {
+  constructor() {
+    super('Usuário não autorizado.')
+  }
+}
