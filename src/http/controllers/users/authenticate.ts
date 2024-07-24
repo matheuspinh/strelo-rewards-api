@@ -21,6 +21,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
       username: user.username,
       role: user.role,
       id: user.id,
+      avatar: user.avatarUrl
     }
   })
 }
