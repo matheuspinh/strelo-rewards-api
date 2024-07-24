@@ -25,6 +25,12 @@ export class FakeUsersRepository implements UsersRepository {
     return user
   }
 
+  async listByCompanyId(companyId: string) {
+    const users = this.items.filter((item) => item.companyId === companyId)
+
+    return users
+  }
+
   async create(data: Prisma.UserUncheckedCreateInput) {
     const user = {
       id: randomUUID(),
@@ -36,7 +42,7 @@ export class FakeUsersRepository implements UsersRepository {
       avatarUrl: null,
       xp: 0,
       gold: 0,
-      companyId: '1',
+      companyId: data.companyId || '1',
       role: data.role || 'user'
     }
 

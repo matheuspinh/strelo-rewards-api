@@ -23,6 +23,16 @@ export class PrismaUsersRepository implements UsersRepository {
     return user
   }
 
+  async listByCompanyId(companyId: string) {
+    const users = await prisma.user.findMany({
+      where: {
+        companyId,
+      },
+    })
+
+    return users
+  }
+
   async create(data: Prisma.UserUncheckedCreateInput) {
     const user = await prisma.user.create({
       data,
