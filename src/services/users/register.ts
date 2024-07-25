@@ -2,6 +2,8 @@ import { UsersRepository } from '@/repositories/users-repository'
 import { hash } from 'bcryptjs'
 import { UserAlreadyExistsError } from '../errors/user-errors'
 import { User } from '@prisma/client'
+import uploadImageToBucket from '@/lib/upload-image-to-bucket'
+import { MultipartFile } from '@fastify/multipart'
 
 interface RegisterServiceRequest {
   username: string
@@ -9,7 +11,7 @@ interface RegisterServiceRequest {
   password: string
   companyId: string
   role?: string
-  avatarUrl?: string
+  image?: MultipartFile
 }
 
 interface RegisterServiceResponse {
@@ -24,7 +26,7 @@ export class RegisterService {
     password,
     companyId,
     role,
-    avatarUrl
+    image
   }: RegisterServiceRequest): Promise<RegisterServiceResponse> {
     const password_hash = await hash(password, 6)
 
@@ -33,6 +35,10 @@ export class RegisterService {
     if (userWithSameEmail) {
       throw new UserAlreadyExistsError()
     }
+    let image_url
+    if (image) {
+      image_url = await uploadImageToBucket.execute({ address: 'avatars', file: image, userId: email })
+    }
 
     const user = await this.usersRepository.create({
       email,
@@ -40,7 +46,7 @@ export class RegisterService {
       passwordHash: password_hash,
       companyId,
       role: role || 'user',
-      avatarUrl: avatarUrl || null
+      avatarUrl: image_url || null
     })
 
     return {
