@@ -3,15 +3,11 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 
 export async function listUsers(request: FastifyRequest, reply: FastifyReply) {
-  const listUserQuerySchema = z.object({
-    companyId: z.string(),
-    userId: z.string()
-  })
 
-  const { companyId, userId } = listUserQuerySchema.parse(request.query)
+  const { id } = request.user
 
   const service = makeListUsersService()
-  const users = await service.execute({ companyId, userId })
+  const users = await service.execute(id)
 
   return reply.status(200).send(users)
 }

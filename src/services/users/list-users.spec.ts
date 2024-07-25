@@ -44,10 +44,7 @@ describe('List Users Service', () => {
       role: 'admin'
     })
 
-    const { users } = await sut.execute({
-      companyId: adminUser.companyId,
-      userId: adminUser.id
-    })
+    const { users } = await sut.execute(adminUser.id)
 
     expect(users).toHaveLength(2)
   })
@@ -61,10 +58,7 @@ describe('List Users Service', () => {
       role: 'admin'
     })
 
-    const { users } = await sut.execute({
-      companyId: adminUser.companyId,
-      userId: adminUser.id
-    })
+    const { users } = await sut.execute(adminUser.id)
 
     expect(users).toHaveLength(1)
   })
@@ -78,10 +72,7 @@ describe('List Users Service', () => {
       role: 'admin'
     })
 
-    const { userCount } = await sut.execute({
-      companyId: adminUser.companyId,
-      userId: adminUser.id
-    })
+    const { userCount } = await sut.execute(adminUser.id)
 
     expect(userCount).toEqual(2)
   })
@@ -94,16 +85,10 @@ describe('List Users Service', () => {
       companyId: 'company-id',
     })
 
-    await expect(() => sut.execute({
-      companyId: user.companyId,
-      userId: user.id
-    })).rejects.toThrowError(new UserUnauthorizedError())
+    await expect(() => sut.execute(user.id)).rejects.toThrowError(new UserUnauthorizedError())
   })
 
   it('should not be able to list users with an invalid user id', async () => {
-    await expect(() => sut.execute({
-      companyId: 'company-id',
-      userId: 'invalid-id'
-    })).rejects.toThrowError(new ResourceNotFound('Usuário não encontrado'))
+    await expect(() => sut.execute('invalid-id')).rejects.toThrowError(new ResourceNotFound('Usuário não encontrado'))
   })
 })
