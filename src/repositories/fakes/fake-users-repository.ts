@@ -50,4 +50,32 @@ export class FakeUsersRepository implements UsersRepository {
 
     return user
   }
+
+  delete(userId: string): Promise<void> {
+    const userIndex = this.items.findIndex((item) => item.id === userId)
+
+    if (userIndex === -1) {
+      throw new Error('User not found')
+    }
+
+    this.items.splice(userIndex, 1)
+
+    return Promise.resolve()
+  }
+
+  update(userId: string, data: Prisma.UserUncheckedUpdateInput) {
+    const userIndex = this.items.findIndex((item) => item.id === userId)
+
+    if (userIndex === -1) {
+      throw new Error('User not found')
+    }
+
+    const user = this.items[userIndex]
+
+    Object.assign(user, data)
+
+    this.items[userIndex] = user
+
+    return Promise.resolve(this.items[userIndex])
+  }
 }
