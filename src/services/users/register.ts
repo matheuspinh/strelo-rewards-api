@@ -37,7 +37,11 @@ export class RegisterService {
     }
     let image_url
     if (image) {
-      image_url = await uploadImageToBucket.execute({ address: 'avatars', file: image, userId: email })
+      try {
+        image_url = await uploadImageToBucket.execute({ address: 'avatars', file: image, userId: email })
+      } catch (error) {
+        throw new Error('Error ao fazer upload da imagem')
+      }
     }
 
     const user = await this.usersRepository.create({
