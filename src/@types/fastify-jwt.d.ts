@@ -3,8 +3,9 @@ import '@fastify/jwt'
 declare module '@fastify/jwt' {
   export interface FastifyJWT {
     user: {
-      sub: string
-      role: 'ADMIN' | 'MEMBER'
+      companyId: string
+      id: string
+      role: 'admin' | 'user'
     }
   }
 }

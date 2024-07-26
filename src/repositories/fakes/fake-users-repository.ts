@@ -25,6 +25,12 @@ export class FakeUsersRepository implements UsersRepository {
     return user
   }
 
+  async listByCompanyId(companyId: string) {
+    const users = this.items.filter((item) => item.companyId === companyId)
+
+    return users
+  }
+
   async create(data: Prisma.UserUncheckedCreateInput) {
     const user = {
       id: randomUUID(),
@@ -36,12 +42,40 @@ export class FakeUsersRepository implements UsersRepository {
       avatarUrl: null,
       xp: 0,
       gold: 0,
-      companyId: '1',
+      companyId: data.companyId || '1',
       role: data.role || 'user'
     }
 
     this.items.push(user)
 
     return user
+  }
+
+  delete(userId: string): Promise<void> {
+    const userIndex = this.items.findIndex((item) => item.id === userId)
+
+    if (userIndex === -1) {
+      throw new Error('User not found')
+    }
+
+    this.items.splice(userIndex, 1)
+
+    return Promise.resolve()
+  }
+
+  update(userId: string, data: Prisma.UserUncheckedUpdateInput) {
+    const userIndex = this.items.findIndex((item) => item.id === userId)
+
+    if (userIndex === -1) {
+      throw new Error('User not found')
+    }
+
+    const user = this.items[userIndex]
+
+    Object.assign(user, data)
+
+    this.items[userIndex] = user
+
+    return Promise.resolve(this.items[userIndex])
   }
 }
