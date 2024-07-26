@@ -6,6 +6,7 @@ import fastifyCors from '@fastify/cors'
 import { usersRoutes } from '@/http/controllers/users/routes'
 import { errorHandler } from './http/middlewares/error-handler'
 import multipart from '@fastify/multipart'
+import { missionRoutes } from './http/controllers/missions/routes'
 
 export const app = fastify()
 
@@ -27,5 +28,6 @@ app.register(fastifyJwt, {
 app.register(fastifyCookie)
 
 app.register(usersRoutes)
+app.register(missionRoutes)
 
 app.setErrorHandler(errorHandler)
