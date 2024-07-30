@@ -18,6 +18,12 @@ async function main() {
           role: 'admin',
         }
       },
+      badges: {
+        create: {
+          title: 'Novo Usuário',
+          description: 'Usuário participa da plataforma pela primeira vez'
+        }
+      },
       description: 'A company that helps other companies to grow',
     }
   })
