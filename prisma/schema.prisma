@@ -22,8 +22,14 @@ model User {
   gold         Int      @default(0)
   role         String   @default("user")
 
-  company   Company @relation(fields: [companyId], references: [id])
+  completedMissionsIDs String[]  @map("completed_missions_ids") @db.ObjectId
+  completedMissions    Mission[] @relation("CompletedMissions", fields: [completedMissionsIDs], references: [id])
+
   companyId String  @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
+
+  missionsIDs String[]  @map("missions_ids") @db.ObjectId
+  missions    Mission[] @relation(fields: [missionsIDs], references: [id])
 
   @@map("users")
 }
@@ -35,5 +41,42 @@ model Company {
   description String
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-  users       User[]
+
+  users    User[]
+  missions Mission[]
+  badges   Badge[]
+}
+
+model Mission {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  imageUrl    String? @map("image_url")
+  xp          Int
+  gold        Int
+
+  completedByIDs String[] @map("completed_by_ids") @db.ObjectId
+  completedBy    User[]   @relation("CompletedMissions", fields: [completedByIDs], references: [id])
+
+  usersIDs String[] @map("users_ids") @db.ObjectId
+  users    User[]   @relation(fields: [usersIDs], references: [id])
+
+  companyId String  @map("company_id") @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
+
+  badgesIDs String[] @map("badges_ids") @db.ObjectId
+  badges    Badge[]  @relation(fields: [badgesIDs], references: [id])
+}
+
+model Badge {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  imageUrl    String? @map("image_url")
+
+  companyId String  @map("company_id") @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
+
+  missionsIDs String[]  @map("missions_ids") @db.ObjectId
+  missions    Mission[] @relation(fields: [missionsIDs], references: [id])
 }

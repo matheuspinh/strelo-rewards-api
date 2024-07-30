@@ -37,4 +37,6 @@ export async function updateUser(request: FastifyRequest, reply: FastifyReply) {
       password: password?.value,
       image: image || null
     })
+
+  return reply.status(204).send()
 }

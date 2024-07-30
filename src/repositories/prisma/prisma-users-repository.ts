@@ -39,6 +39,8 @@ export class PrismaUsersRepository implements UsersRepository {
         gold: true,
         createdAt: true,
         updatedAt: true,
+        completedMissionsIDs: true,
+        missionsIDs: true,
       }
     })
 

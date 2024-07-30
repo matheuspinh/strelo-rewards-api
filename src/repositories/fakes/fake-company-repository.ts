@@ -1,5 +1,6 @@
 import { Company, Prisma } from "@prisma/client";
 import { CompanyRepository } from "../company-repository";
+import { randomInt } from "crypto";
 
 export class FakeCompanyRepository implements CompanyRepository {
   public items: Company[] = []
@@ -16,7 +17,7 @@ export class FakeCompanyRepository implements CompanyRepository {
 
   async create(data: Prisma.CompanyUncheckedCreateInput) {
     const company = {
-      id: '1',
+      id: randomInt(1, 1000).toString(),
       name: data.name,
       description: data.description,
       logoUrl: data.logoUrl || null,

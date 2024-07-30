@@ -3,3 +3,9 @@ export class ResourceNotFound extends Error {
     super(message)
   }
 }
+
+export class DatabaseError extends Error {
+  constructor(message: string = 'Erro de banco de dados') {
+    super(message)
+  }
+}

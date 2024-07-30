@@ -35,8 +35,6 @@ export class UpdateUserService {
       data.password = await hash(data.password, 6)
     }
 
-    console.log(data.password)
-
     let image_url
     if (data.image) {
       try {
