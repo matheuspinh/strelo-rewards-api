@@ -1,7 +1,11 @@
 import { Prisma, User } from '@prisma/client'
 
+export type UserWithoutPassword = Omit<User, 'passwordHash'>
 export interface UsersRepository {
   findById(userId: string): Promise<User | null>
   findByEmail(email: string): Promise<User | null>
-  create(data: Prisma.UserCreateInput): Promise<User>
+  listByCompanyId(companyId: string): Promise<UserWithoutPassword[]>
+  create(data: Prisma.UserUncheckedCreateInput): Promise<User>
+  delete(userId: string): Promise<void>
+  update(userId: string, data: Prisma.UserUncheckedUpdateInput): Promise<User>
 }
