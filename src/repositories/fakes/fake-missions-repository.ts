@@ -1,5 +1,5 @@
 import { Mission, Prisma } from "@prisma/client";
-import { MissionsRepository } from "../missions-repository";
+import { MissionsRepository, MissionWithRelations } from "../missions-repository";
 import { randomUUID } from "crypto";
 
 export class FakeMissionsRepository implements MissionsRepository {
@@ -25,8 +25,8 @@ export class FakeMissionsRepository implements MissionsRepository {
     return mission
   }
 
-  async listByCompany(companyId: string): Promise<Mission[]> {
-    return this.items.filter(mission => mission.companyId === companyId)
+  async listByCompany(companyId: string) {
+    return this.items.filter(mission => mission.companyId === companyId) as MissionWithRelations[]
   }
 
   async delete(missionId: string): Promise<void> {
@@ -39,5 +39,31 @@ export class FakeMissionsRepository implements MissionsRepository {
     this.items.splice(missionIndex, 1)
 
     return Promise.resolve()
+  }
+
+  async findById(missionId: string) {
+    const mission = this.items.find((item) => item.id === missionId)
+
+    if (!mission) {
+      return null
+    }
+
+    return mission as MissionWithRelations
+  }
+
+  async update(missionId: string, data: Prisma.MissionUncheckedUpdateInput): Promise<Mission> {
+    const missionIndex = this.items.findIndex((item) => item.id === missionId)
+
+    if (missionIndex === -1) {
+      throw new Error('Mission not found')
+    }
+
+    const mission = this.items[missionIndex]
+
+    Object.assign(mission, data)
+
+    this.items[missionIndex] = mission
+
+    return Promise.resolve(this.items[missionIndex])
   }
 }
