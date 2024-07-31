@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { MissionsRepository } from "../missions-repository";
 import { prisma } from "@/lib/prisma";
-import { disconnect } from "process";
 
 export class PrismaMissionsRepository implements MissionsRepository {
   async create(data: Prisma.MissionUncheckedCreateInput) {
@@ -12,8 +11,8 @@ export class PrismaMissionsRepository implements MissionsRepository {
           users: Array.isArray(data.usersIDs) ? {
             connect: data.usersIDs.map((userId) => ({ id: userId })),
           } : undefined,
-          badges: Array.isArray(data.badges) ? {
-            connect: data.badges.map((badgeId) => ({ id: badgeId })),
+          badges: Array.isArray(data.badgesIDs) ? {
+            connect: data.badgesIDs.map((badgeId) => ({ id: badgeId })),
           } : undefined,
         },
       });
@@ -140,7 +139,7 @@ export class PrismaMissionsRepository implements MissionsRepository {
   }
 
   async update(missionId: string, data: Prisma.MissionUncheckedUpdateInput) {
-    const users = await prisma.mission.findUnique({
+    const missionToUpdate = await prisma.mission.findUnique({
       where: {
         id: missionId
       },
@@ -159,8 +158,8 @@ export class PrismaMissionsRepository implements MissionsRepository {
     })
     const { usersIDs, badgesIDs } = data
 
-    const currentUsersIds = users?.users ?? []
-    const currentBadges = users?.badges ?? []
+    const currentUsersIds = missionToUpdate?.users ?? []
+    const currentBadges = missionToUpdate?.badges ?? []
     let usersIDsToDisconnect
     let badgesIDsToDisconnect
 
