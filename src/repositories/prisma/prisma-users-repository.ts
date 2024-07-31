@@ -41,6 +41,7 @@ export class PrismaUsersRepository implements UsersRepository {
         updatedAt: true,
         completedMissionsIDs: true,
         missionsIDs: true,
+        badgesIDs: true,
       }
     })
 

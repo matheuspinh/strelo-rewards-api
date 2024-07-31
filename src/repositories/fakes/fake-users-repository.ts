@@ -46,6 +46,7 @@ export class FakeUsersRepository implements UsersRepository {
       role: data.role || 'user',
       missionsIDs: [],
       completedMissionsIDs: [],
+      badgesIDs: [],
     }
 
     this.items.push(user)
