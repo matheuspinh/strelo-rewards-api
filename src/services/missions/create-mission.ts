@@ -30,7 +30,6 @@ export class CreateMissionService {
     if (data.image) {
       try {
         imageUrl = await uploadImageToBucket.execute({ address: 'missions', file: data.image, userId: data.title })
-        console.log('imageUrl', imageUrl)
       } catch (error) {
         throw new Error('Error ao fazer upload da imagem')
       }

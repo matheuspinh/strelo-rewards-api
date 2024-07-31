@@ -31,6 +31,9 @@ model User {
   missionsIDs String[]  @map("missions_ids") @db.ObjectId
   missions    Mission[] @relation(fields: [missionsIDs], references: [id])
 
+  badgesIDs String[] @map("badges_ids") @db.ObjectId
+  badges    Badge[]  @relation(fields: [badgesIDs], references: [id])
+
   @@map("users")
 }
 
@@ -76,6 +79,9 @@ model Badge {
 
   companyId String  @map("company_id") @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
+
+  earnedByIDs String[] @map("earned_by_ids") @db.ObjectId
+  earnedBy    User[]   @relation(fields: [earnedByIDs], references: [id])
 
   missionsIDs String[]  @map("missions_ids") @db.ObjectId
   missions    Mission[] @relation(fields: [missionsIDs], references: [id])

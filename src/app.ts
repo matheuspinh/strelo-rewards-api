@@ -7,6 +7,7 @@ import { usersRoutes } from '@/http/controllers/users/routes'
 import { errorHandler } from './http/middlewares/error-handler'
 import multipart from '@fastify/multipart'
 import { missionRoutes } from './http/controllers/missions/routes'
+import { badgeRoutes } from './http/controllers/badges/routes'
 
 export const app = fastify()
 
@@ -29,5 +30,6 @@ app.register(fastifyCookie)
 
 app.register(usersRoutes)
 app.register(missionRoutes)
+app.register(badgeRoutes)
 
 app.setErrorHandler(errorHandler)
