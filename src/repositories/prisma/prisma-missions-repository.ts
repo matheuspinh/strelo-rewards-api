@@ -61,11 +61,46 @@ export class PrismaMissionsRepository implements MissionsRepository {
   }
 
   async delete(missionId: string) {
-    await prisma.mission.delete({
+    const usersWithMission = await prisma.user.findMany({
       where: {
-        id: missionId,
-      },
-    });
+        missions: {
+          some: {
+            id: missionId
+          }
+        }
+      }
+    })
+
+    const badgesWithMission = await prisma.badge.findMany({
+      where: {
+        missions: {
+          some: {
+            id: missionId
+          }
+        }
+      }
+    })
+
+    const [, mission] = await prisma.$transaction([
+      prisma.mission.update({
+        where: {
+          id: missionId
+        },
+        data: {
+          badges: {
+            disconnect: badgesWithMission.map(badge => ({ id: badge.id }))
+          },
+          users: {
+            disconnect: usersWithMission.map(user => ({ id: user.id }))
+          }
+        }
+      }),
+      prisma.mission.delete({
+        where: {
+          id: missionId,
+        },
+      })
+    ])
   }
 
   async findById(missionId: string) {
