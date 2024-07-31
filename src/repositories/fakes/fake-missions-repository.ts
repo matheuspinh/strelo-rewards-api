@@ -17,6 +17,9 @@ export class FakeMissionsRepository implements MissionsRepository {
       usersIDs: [],
       companyId: data.companyId,
       badgesIDs: [],
+      missions: [],
+      badges: [],
+      users: [],
       createdAt: new Date(),
       updatedAt: new Date()
     }
