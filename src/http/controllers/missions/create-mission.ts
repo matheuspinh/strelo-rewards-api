@@ -31,7 +31,6 @@ export async function createMission(request: FastifyRequest, reply: FastifyReply
 
   const image = data.image as MultipartFile
 
-  console.log(image)
   const { companyId } = request.user
 
   const createMissionService = makeCreateMissionService()
