@@ -17,7 +17,6 @@ export class ListPrivilegesService {
 
       return { privileges, privilegesCount }
     } catch (error) {
-      console.log(error)
       if (error instanceof ResourceNotFound) {
         throw error
       }
