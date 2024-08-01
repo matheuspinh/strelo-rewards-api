@@ -20,6 +20,11 @@ export async function getUser(request: FastifyRequest, reply: FastifyReply) {
     username: user.username,
     role: user.role,
     id: user.id,
-    avatarUrl: user.avatarUrl
+    xp: user.xp,
+    gold: user.gold,
+    avatarUrl: user.avatarUrl,
+    badges: user.badges,
+    missions: user.missions,
+    privileges: user.privileges,
   })
 }

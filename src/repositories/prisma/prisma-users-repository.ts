@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
-import { UsersRepository } from '../users-repository'
+import { UsersRepository, UserWithAssociations } from '../users-repository'
 
 export class PrismaUsersRepository implements UsersRepository {
   async findById(userId: string) {
@@ -8,9 +8,26 @@ export class PrismaUsersRepository implements UsersRepository {
       where: {
         id: userId,
       },
+      include: {
+        missions: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            xp: true,
+            gold: true,
+            users: true,
+            badges: true,
+            imageUrl: true,
+          }
+        },
+        badges: true,
+        completedMissions: true,
+        privileges: true,
+      }
     })
 
-    return user
+    return user as unknown as UserWithAssociations
   }
 
   async findByEmail(email: string) {
