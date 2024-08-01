@@ -6,7 +6,6 @@ export async function updatePrivilege(request: FastifyRequest, reply: FastifyRep
   const updatePrivilegeBody = z.object({
     title: z.string().min(3),
     description: z.string().min(3),
-    companyId: z.string(),
     requiredBadgeId: z.string(),
     xp: z.number(),
     gold: z.number(),

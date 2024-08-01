@@ -6,7 +6,6 @@ export async function createPrivilege(request: FastifyRequest, reply: FastifyRep
   const createPrivilegeBody = z.object({
     title: z.string().min(3),
     description: z.string().min(3),
-    companyId: z.string(),
     requiredBadgeId: z.string(),
     xp: z.number(),
     gold: z.number(),
