@@ -6,6 +6,7 @@ import { verifyUserRole } from "@/http/middlewares/verify-user-role";
 import { deleteMission } from "./delete-missions";
 import { getMission } from "./get-mission";
 import { updateMission } from "./update-mission";
+import { completeMission } from "./complete-mission";
 
 export async function missionRoutes(app: FastifyInstance) {
   app.post('/api/missions', { onRequest: verifyJWT }, createMission)
@@ -13,4 +14,5 @@ export async function missionRoutes(app: FastifyInstance) {
   app.delete('/api/missions/:id', { onRequest: [verifyJWT, verifyUserRole('admin')] }, deleteMission)
   app.get('/api/mission/:missionId', { onRequest: verifyJWT }, getMission)
   app.patch('/api/mission/:missionId', { onRequest: [verifyJWT, verifyUserRole('admin')] }, updateMission)
+  app.patch('/api/mission/complete/:missionId', { onRequest: verifyJWT }, completeMission)
 }

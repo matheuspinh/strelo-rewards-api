@@ -14,6 +14,5 @@ export const errorHandler = (error: Error, _: FastifyRequest, reply: FastifyRepl
   if (error instanceof InvalidCredentialsError) {
     return reply.status(401).send({ message: error.message });
   }
-
   return reply.status(500).send({ message: 'Erro ao processar solicitação' });
 }
