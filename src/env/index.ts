@@ -11,6 +11,8 @@ const envSchema = z.object({
   AWS_BUCKET_NAME: z.string(),
   AWS_REGION: z.string(),
   AWS_BUCKET_URL: z.string(),
+  SEED_ADMIN_EMAIL: z.string(),
+  SEED_ADMIN_PASSWORD: z.string()
 })
 
 

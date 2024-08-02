@@ -1,10 +1,11 @@
+import { env } from "@/env";
 import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const password_hash = await hash('123123123', 6);
+  const password_hash = await hash(env.SEED_ADMIN_PASSWORD, 6);
   const company = await prisma.company.upsert({
     where: { name: 'strelo' },
     update: {},
@@ -12,7 +13,7 @@ async function main() {
       name: 'strelo',
       users: {
         create: {
-          email: 'admin@admin.com',
+          email: env.SEED_ADMIN_EMAIL,
           passwordHash: password_hash,
           username: 'admin',
           role: 'admin',
