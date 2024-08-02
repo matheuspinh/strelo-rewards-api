@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
-import { UsersRepository } from '../users-repository'
+import { UsersRepository, UserWithAssociations } from '../users-repository'
 
 export class PrismaUsersRepository implements UsersRepository {
   async findById(userId: string) {
@@ -8,9 +8,26 @@ export class PrismaUsersRepository implements UsersRepository {
       where: {
         id: userId,
       },
+      include: {
+        missions: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            xp: true,
+            gold: true,
+            users: true,
+            badges: true,
+            imageUrl: true,
+          }
+        },
+        badges: true,
+        completedMissions: true,
+        privileges: true,
+      }
     })
 
-    return user
+    return user as unknown as UserWithAssociations
   }
 
   async findByEmail(email: string) {
@@ -57,11 +74,46 @@ export class PrismaUsersRepository implements UsersRepository {
   }
 
   async delete(userId: string) {
-    await prisma.user.delete({
+    const missionsWithUser = await prisma.mission.findMany({
       where: {
-        id: userId,
+        users: {
+          some: {
+            id: userId,
+          },
+        },
       },
     })
+
+    const badgesWithUser = await prisma.badge.findMany({
+      where: {
+        earnedBy: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+    })
+
+    const [, user] = await prisma.$transaction([
+      prisma.user.update({
+        where: {
+          id: userId
+        },
+        data: {
+          missions: {
+            disconnect: missionsWithUser.map(mission => ({ id: mission.id }))
+          },
+          badges: {
+            disconnect: badgesWithUser.map(badge => ({ id: badge.id }))
+          }
+        }
+      }),
+      prisma.user.delete({
+        where: {
+          id: userId,
+        },
+      })
+    ])
   }
 
   async update(userId: string, data: Prisma.UserUncheckedUpdateInput) {

@@ -25,5 +25,6 @@ export async function getMission(request: FastifyRequest, reply: FastifyReply) {
     companyId: mission.companyId,
     users: mission.users,
     badges: mission.badges,
+    completedBy: mission.completedBy,
   })
 }

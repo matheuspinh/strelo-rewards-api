@@ -15,8 +15,6 @@ export class UpdateBadgeService {
   async execute(badgeId: string, data: UpdateBadgeServiceRequest) {
     const badge = await this.badgesRepository.findById(badgeId)
 
-    console.log(badgeId)
-    console.log(badge)
 
     if (!badge) {
       throw new ResourceNotFound('Insígnia não encontrada')

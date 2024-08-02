@@ -50,10 +50,44 @@ export class PrismaBadgesRepository implements BadgesRepository {
   }
 
   async delete(badgeId: string) {
-    await prisma.badge.delete({
+    const missionsWithBadge = await prisma.mission.findMany({
       where: {
-        id: badgeId,
-      },
+        badges: {
+          some: {
+            id: badgeId
+          }
+        }
+      }
     })
+    const usersWithBadge = await prisma.user.findMany({
+      where: {
+        badges: {
+          some: {
+            id: badgeId
+          }
+        }
+      }
+    })
+
+    const [, badge] = await prisma.$transaction([
+      prisma.badge.update({
+        where: {
+          id: badgeId
+        },
+        data: {
+          missions: {
+            disconnect: missionsWithBadge.map(mission => ({ id: mission.id }))
+          },
+          earnedBy: {
+            disconnect: usersWithBadge.map(user => ({ id: user.id }))
+          }
+        }
+      }),
+      prisma.badge.delete({
+        where: {
+          id: badgeId,
+        },
+      })
+    ])
   }
 }

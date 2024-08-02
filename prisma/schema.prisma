@@ -34,6 +34,9 @@ model User {
   badgesIDs String[] @map("badges_ids") @db.ObjectId
   badges    Badge[]  @relation(fields: [badgesIDs], references: [id])
 
+  privilegesIDs String[]    @map("privileges_ids") @db.ObjectId
+  privileges    Privilege[] @relation(fields: [privilegesIDs], references: [id])
+
   @@map("users")
 }
 
@@ -45,9 +48,10 @@ model Company {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  users    User[]
-  missions Mission[]
-  badges   Badge[]
+  users      User[]
+  missions   Mission[]
+  badges     Badge[]
+  privileges Privilege[]
 }
 
 model Mission {
@@ -85,4 +89,23 @@ model Badge {
 
   missionsIDs String[]  @map("missions_ids") @db.ObjectId
   missions    Mission[] @relation(fields: [missionsIDs], references: [id])
+
+  privileges Privilege[]
+}
+
+model Privilege {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  xp          Int    @default(0)
+  gold        Int    @default(0)
+
+  requiredBadgeID String? @map("required_badges_ids") @db.ObjectId
+  requiredBadge   Badge?  @relation(fields: [requiredBadgeID], references: [id])
+
+  companyId String  @map("company_id") @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
+
+  usersIDs String[] @map("users_ids") @db.ObjectId
+  users    User[]   @relation(fields: [usersIDs], references: [id])
 }

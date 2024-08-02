@@ -1,4 +1,4 @@
-import { Prisma, User } from '@prisma/client'
+import { Badge, Mission, Prisma, Privilege, User } from '@prisma/client'
 
 export type UserWithoutPassword = {
   id: string;
@@ -15,8 +15,15 @@ export type UserWithoutPassword = {
   missionsIDs: string[];
   badgesIDs: string[];
 }
+
+export type UserWithAssociations = UserWithoutPassword & {
+  badges: Badge[]
+  missions: Mission[]
+  privileges: Privilege[]
+  completedMissions: Mission[]
+}
 export interface UsersRepository {
-  findById(userId: string): Promise<User | null>
+  findById(userId: string): Promise<UserWithAssociations | null>
   findByEmail(email: string): Promise<User | null>
   listByCompanyId(companyId: string): Promise<UserWithoutPassword[]>
   create(data: Prisma.UserUncheckedCreateInput): Promise<User>
