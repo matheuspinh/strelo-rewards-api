@@ -7,10 +7,12 @@ export interface MissionWithRelations extends Mission {
   users: UserInMission[]
   completedBy: UserInMission[]
 }
+
 export interface MissionsRepository {
   create(data: Prisma.MissionUncheckedCreateInput): Promise<Mission>
   listByCompany(companyId: string): Promise<MissionWithRelations[]>
   delete(missionId: string): Promise<void>
   findById(missionId: string): Promise<MissionWithRelations | null>
   update(missionId: string, data: Prisma.MissionUncheckedUpdateInput): Promise<Mission>
+  missionCompletion(missionId: string, data: string[]): Promise<void>
 }

@@ -37,7 +37,6 @@ export class UpdateMissionService {
     const currentBadgesIds = mission.badges.map(badge => badge.id)
 
     const userIdsToDisconnect = currentUsersIds.filter(userId => !data.usersIDs?.includes(userId))
-
     let updatedMission
     try {
       updatedMission = await this.missionsRepository.update(missionId, {
