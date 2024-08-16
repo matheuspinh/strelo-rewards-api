@@ -22,122 +22,138 @@ export class PrismaPrivilegesRepository implements PrivilegesRepository {
   }
 
   async listByCompanyId(companyId: string): Promise<Privilege[]> {
-    const privileges = await prisma.privilege.findMany({
-      where: {
-        companyId
-      },
-      include: {
-        users: {
-          select: {
-            id: true,
-          }
+    try {
+      const privileges = await prisma.privilege.findMany({
+        where: {
+          companyId
         },
-        requiredBadge: {
-          select: {
-            id: true,
+        include: {
+          users: {
+            select: {
+              id: true,
+            }
+          },
+          requiredBadge: {
+            select: {
+              id: true,
+            }
           }
         }
-      }
-    })
+      })
 
-    return privileges;
+      return privileges;
+    } catch (error: any) {
+      throw new Error(error)
+    }
   }
 
   async findById(privilegeId: string) {
-    const privilege = await prisma.privilege.findUnique({
-      where: {
-        id: privilegeId
-      },
-      include: {
-        users: {
-          select: {
-            id: true,
-            email: true,
-            username: true,
-            avatarUrl: true,
-            gold: true,
-            xp: true,
-          }
+    try {
+      const privilege = await prisma.privilege.findUnique({
+        where: {
+          id: privilegeId
         },
-        requiredBadge: {
-          select: {
-            id: true,
+        include: {
+          users: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              avatarUrl: true,
+              gold: true,
+              xp: true,
+            }
+          },
+          requiredBadge: {
+            select: {
+              id: true,
+            }
           }
         }
-      }
-    })
-    return privilege;
+      })
+      return privilege;
+    } catch (error: any) {
+      throw new Error(error)
+    }
   }
 
   async update(privilegeId: string, data: Prisma.PrivilegeUncheckedUpdateInput) {
-    const privilegeToUpdate = await prisma.privilege.findUnique({
-      where: {
-        id: privilegeId
-      },
-      include: {
-        users: {
-          select: {
-            id: true
-          }
+    try {
+      const privilegeToUpdate = await prisma.privilege.findUnique({
+        where: {
+          id: privilegeId
         },
-      }
-    })
-
-    const { usersIDs } = data
-
-    const currentUserIds = privilegeToUpdate?.users ?? [];
-
-    let usersIDsToDisconnect
-
-    if (Array.isArray(usersIDs)) {
-      usersIDsToDisconnect = currentUserIds
-        .filter((user) => !usersIDs.includes(user.id))
-        .map(userId => userId)
-    }
-
-    const privilege = await prisma.privilege.update({
-      where: {
-        id: privilegeId
-      },
-      data: {
-        ...data,
-        users: Array.isArray(data.usersIDs) ? {
-          connect: data.usersIDs.map((userId) => ({ id: userId })),
-          disconnect: usersIDsToDisconnect
-        } : undefined,
-      }
-    })
-
-    return privilege;
-  }
-
-  async delete(privilegeId: string) {
-    const usersWithPrivilege = await prisma.user.findMany({
-      where: {
-        privileges: {
-          some: {
-            id: privilegeId
-          }
+        include: {
+          users: {
+            select: {
+              id: true
+            }
+          },
         }
-      }
-    })
+      })
 
-    const [, privilege] = await prisma.$transaction([
-      prisma.privilege.update({
+      const { usersIDs } = data
+
+      const currentUserIds = privilegeToUpdate?.users ?? [];
+
+      let usersIDsToDisconnect
+
+      if (Array.isArray(usersIDs)) {
+        usersIDsToDisconnect = currentUserIds
+          .filter((user) => !usersIDs.includes(user.id))
+          .map(userId => userId)
+      }
+
+      const privilege = await prisma.privilege.update({
         where: {
           id: privilegeId
         },
         data: {
-          users: {
-            disconnect: usersWithPrivilege.map(user => ({ id: user.id }))
-          }
-        }
-      }),
-      prisma.privilege.delete({
-        where: {
-          id: privilegeId
+          ...data,
+          users: Array.isArray(data.usersIDs) ? {
+            connect: data.usersIDs.map((userId) => ({ id: userId })),
+            disconnect: usersIDsToDisconnect
+          } : undefined,
         }
       })
-    ])
+
+      return privilege;
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
+  async delete(privilegeId: string) {
+    try {
+      const usersWithPrivilege = await prisma.user.findMany({
+        where: {
+          privileges: {
+            some: {
+              id: privilegeId
+            }
+          }
+        }
+      })
+
+      const [, privilege] = await prisma.$transaction([
+        prisma.privilege.update({
+          where: {
+            id: privilegeId
+          },
+          data: {
+            users: {
+              disconnect: usersWithPrivilege.map(user => ({ id: user.id }))
+            }
+          }
+        }),
+        prisma.privilege.delete({
+          where: {
+            id: privilegeId
+          }
+        })
+      ])
+    } catch (error: any) {
+      throw new Error(error)
+    }
   }
 }
