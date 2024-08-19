@@ -24,9 +24,9 @@ describe("Create Badge Service", () => {
       companyId: company.id,
       title: "Badge Title",
       description: "Badge Description",
-      imageUrl: null,
-      earnedByIDs: [],
-      missionsIDs: []
+      image: null,
+      classification: 'bronze',
+      skillType: 'hardskill'
     })
 
     expect(badge.title).toEqual('Badge Title')
@@ -37,9 +37,9 @@ describe("Create Badge Service", () => {
       companyId: "invalid-company-id",
       title: "Badge Title",
       description: "Badge Description",
-      imageUrl: null,
-      earnedByIDs: [],
-      missionsIDs: []
+      image: null,
+      classification: 'bronze',
+      skillType: 'hardskill'
     })).rejects.toThrow('Empresa não encontrada')
   })
 })

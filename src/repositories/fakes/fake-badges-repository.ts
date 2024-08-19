@@ -11,6 +11,8 @@ export class FakeBadgesRepository implements BadgesRepository {
       title: data.title,
       description: data.description,
       imageUrl: data.imageUrl || '',
+      classification: data.classification,
+      skillType: data.skillType,
       missionsIDs: data.missionsIDs || [],
     } as Badge
 

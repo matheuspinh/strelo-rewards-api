@@ -11,11 +11,17 @@ export async function createBadge(request: FastifyRequest, reply: FastifyReply) 
     description: z.object({
       value: z.string().min(3),
     }),
+    classification: z.object({
+      value: z.string().nonempty('Informe uma classificação para a conquista'),
+    }),
+    skillType: z.object({
+      value: z.string().nonempty('Informe um tipo de habilidade para a conquista'),
+    }),
   }).passthrough()
 
   const data = createBadgeBody.parse(request.body)
 
-  const { title, description } = data
+  const { title, description, classification, skillType } = data
 
   const image = data.image as MultipartFile
 
@@ -27,7 +33,9 @@ export async function createBadge(request: FastifyRequest, reply: FastifyReply) 
     companyId,
     title: title.value,
     description: description.value,
-    image: image || null
+    image: image || null,
+    classification: classification.value,
+    skillType: skillType.value,
   })
 
   return reply.status(201).send(badge)
