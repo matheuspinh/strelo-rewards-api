@@ -4,20 +4,28 @@ import { CompanyRepository } from '../company-repository'
 
 export class PrismaCompaniesRepository implements CompanyRepository {
   async findById(userId: string) {
-    const user = await prisma.company.findUnique({
-      where: {
-        id: userId,
-      },
-    })
+    try {
+      const user = await prisma.company.findUnique({
+        where: {
+          id: userId,
+        },
+      })
 
-    return user
+      return user
+    } catch (error: any) {
+      throw new Error(error)
+    }
   }
 
   async create(data: Prisma.CompanyCreateInput) {
-    const company = await prisma.company.create({
-      data,
-    })
+    try {
+      const company = await prisma.company.create({
+        data,
+      })
 
-    return company
+      return company
+    } catch (error: any) {
+      throw new Error(error)
+    }
   }
 }

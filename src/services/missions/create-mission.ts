@@ -1,6 +1,6 @@
 import { CompanyRepository } from "@/repositories/company-repository";
 import { MissionsRepository } from "@/repositories/missions-repository";
-import { DatabaseError } from "../errors/general-errors";
+import { DatabaseError, ResourceNotFound } from "../errors/general-errors";
 import { MultipartFile } from "@fastify/multipart";
 import uploadImageToBucket from "@/lib/upload-image-to-bucket";
 
@@ -20,10 +20,15 @@ export class CreateMissionService {
   constructor(private missionsRepository: MissionsRepository, private companiesRepository: CompanyRepository) { }
 
   async execute(data: CreateMissionData) {
-    const company = await this.companiesRepository.findById(data.companyId)
+    try {
+      const company = await this.companiesRepository.findById(data.companyId)
 
-    if (!company) {
-      throw new Error('Company not found')
+
+      if (!company) {
+        throw new Error('Company not found')
+      }
+    } catch (error) {
+      throw new ResourceNotFound('Company not found')
     }
 
     let imageUrl
@@ -48,7 +53,6 @@ export class CreateMissionService {
       })
       return mission
     } catch (error) {
-      console.log('error', error)
       throw new DatabaseError('Error creating mission')
     }
   }

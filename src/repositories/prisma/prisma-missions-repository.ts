@@ -24,240 +24,260 @@ export class PrismaMissionsRepository implements MissionsRepository {
   }
 
   async listByCompany(companyId: string) {
-    const missions = await prisma.mission.findMany({
-      where: {
-        companyId,
-      },
-      include: {
-        users: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            avatarUrl: true,
-          }
+    try {
+      const missions = await prisma.mission.findMany({
+        where: {
+          companyId,
         },
-        badges: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            imageUrl: true,
+        include: {
+          users: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              avatarUrl: true,
+            }
           },
-        },
-        completedBy: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            avatarUrl: true,
+          badges: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              imageUrl: true,
+            },
+          },
+          completedBy: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              avatarUrl: true,
+            }
           }
         }
-      }
-    });
+      });
 
-    return missions;
+      return missions;
+    } catch (error) {
+      throw new Error('Error listing missions')
+    }
   }
 
   async delete(missionId: string) {
-    const usersWithMission = await prisma.user.findMany({
-      where: {
-        missions: {
-          some: {
-            id: missionId
-          }
-        }
-      }
-    })
-
-    const badgesWithMission = await prisma.badge.findMany({
-      where: {
-        missions: {
-          some: {
-            id: missionId
-          }
-        }
-      }
-    })
-
-    const [, mission] = await prisma.$transaction([
-      prisma.mission.update({
+    try {
+      const usersWithMission = await prisma.user.findMany({
         where: {
-          id: missionId
-        },
-        data: {
-          badges: {
-            disconnect: badgesWithMission.map(badge => ({ id: badge.id }))
-          },
-          users: {
-            disconnect: usersWithMission.map(user => ({ id: user.id }))
+          missions: {
+            some: {
+              id: missionId
+            }
           }
         }
-      }),
-      prisma.mission.delete({
-        where: {
-          id: missionId,
-        },
       })
-    ])
+
+      const badgesWithMission = await prisma.badge.findMany({
+        where: {
+          missions: {
+            some: {
+              id: missionId
+            }
+          }
+        }
+      })
+
+      const [, mission] = await prisma.$transaction([
+        prisma.mission.update({
+          where: {
+            id: missionId
+          },
+          data: {
+            badges: {
+              disconnect: badgesWithMission.map(badge => ({ id: badge.id }))
+            },
+            users: {
+              disconnect: usersWithMission.map(user => ({ id: user.id }))
+            }
+          }
+        }),
+        prisma.mission.delete({
+          where: {
+            id: missionId,
+          },
+        })
+      ])
+    } catch (error) {
+      throw new Error('Error deleting mission')
+    }
   }
 
   async findById(missionId: string) {
-    const mission = await prisma.mission.findUnique({
-      where: {
-        id: missionId,
-      },
-      include: {
-        users: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            avatarUrl: true,
-          }
-        },
-        badges: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            imageUrl: true,
-          },
-        },
-        completedBy: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            avatarUrl: true,
-          }
-        }
-      }
-    });
-
-    return mission;
-  }
-
-  async update(missionId: string, data: Prisma.MissionUncheckedUpdateInput) {
-    const missionToUpdate = await prisma.mission.findUnique({
-      where: {
-        id: missionId
-      },
-      include: {
-        users: {
-          select: {
-            id: true
-          }
-        },
-        badges: {
-          select: {
-            id: true
-          }
-        }
-      }
-    })
-    const { usersIDs, badgesIDs } = data
-
-    const currentUsersIds = missionToUpdate?.users ?? []
-    const currentBadges = missionToUpdate?.badges ?? []
-    let usersIDsToDisconnect
-    let badgesIDsToDisconnect
-
-    let usersIDsToConnect
-    if (Array.isArray(usersIDs)) {
-      usersIDsToDisconnect = currentUsersIds
-        .filter(userId => !usersIDs.includes(userId.id))
-        .map(userId => (userId))
-      usersIDsToConnect = usersIDs.filter(userId => userId !== null)
-    }
-
-    let badgesToConnect
-    if (Array.isArray(badgesIDs)) {
-      badgesIDsToDisconnect = currentBadges
-        .filter(badgeId => !badgesIDs.includes(badgeId.id))
-        .map(badgeId => (badgeId))
-      badgesToConnect = badgesIDs.filter(badgeID => badgeID !== null)
-    }
-
-    const mission = await prisma.mission.update({
-      where: {
-        id: missionId,
-      },
-      data: {
-        ...data,
-        users: Array.isArray(usersIDsToConnect) ? {
-          connect: usersIDsToConnect.map((userId) => ({ id: userId })),
-          disconnect: usersIDsToDisconnect,
-        } : undefined,
-        badges: Array.isArray(badgesToConnect) ? {
-          connect: badgesToConnect.map((badgeId) => ({ id: badgeId })),
-          disconnect: badgesIDsToDisconnect
-        } : undefined
-      }
-    });
-
-    return mission;
-  }
-
-  async missionCompletion(missionId: string, data: string[]): Promise<void> {
-    await prisma.$transaction(async (prisma) => {
+    try {
       const mission = await prisma.mission.findUnique({
         where: {
           id: missionId,
         },
         include: {
-          completedBy: {
-            select: {
-              id: true,
-            }
-          },
           users: {
             select: {
               id: true,
+              username: true,
+              email: true,
+              avatarUrl: true,
             }
           },
           badges: {
             select: {
               id: true,
+              title: true,
+              description: true,
+              imageUrl: true,
+            },
+          },
+          completedBy: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              avatarUrl: true,
+            }
+          }
+        }
+      });
+
+      return mission;
+    } catch (error) {
+      throw new Error('Error finding mission')
+    }
+  }
+
+  async update(missionId: string, data: Prisma.MissionUncheckedUpdateInput) {
+    try {
+      const missionToUpdate = await prisma.mission.findUnique({
+        where: {
+          id: missionId
+        },
+        include: {
+          users: {
+            select: {
+              id: true
+            }
+          },
+          badges: {
+            select: {
+              id: true
             }
           }
         }
       })
+      const { usersIDs, badgesIDs } = data
 
-      if (!mission) {
-        throw new Error('Mission not found')
+      const currentUsersIds = missionToUpdate?.users ?? []
+      const currentBadges = missionToUpdate?.badges ?? []
+      let usersIDsToDisconnect
+      let badgesIDsToDisconnect
+
+      let usersIDsToConnect
+      if (Array.isArray(usersIDs)) {
+        usersIDsToDisconnect = currentUsersIds
+          .filter(userId => !usersIDs.includes(userId.id))
+          .map(userId => (userId))
+        usersIDsToConnect = usersIDs.filter(userId => userId !== null)
       }
 
-      const usersId = data
+      let badgesToConnect
+      if (Array.isArray(badgesIDs)) {
+        badgesIDsToDisconnect = currentBadges
+          .filter(badgeId => !badgesIDs.includes(badgeId.id))
+          .map(badgeId => (badgeId))
+        badgesToConnect = badgesIDs.filter(badgeID => badgeID !== null)
+      }
 
-      const currentCompletedByIds = mission.completedBy.map(user => user.id);
-      const usersToDisconnect = currentCompletedByIds.filter(id => !usersId.includes(id));
-      const usersToReward = usersId.filter(id => !currentCompletedByIds.includes(id));
-
-      await Promise.all(usersToReward.map(async (userId) => {
-        await prisma.user.update({
-          where: { id: userId },
-          data: {
-            gold: { increment: mission.gold },
-            xp: { increment: mission.xp },
-            badges: {
-              connect: mission.badges.map(badge => ({ id: badge.id }))
-            },
-          }
-        })
-      }))
-
-      await prisma.mission.update({
-        where: { id: missionId },
+      const mission = await prisma.mission.update({
+        where: {
+          id: missionId,
+        },
         data: {
-          completedByIDs: usersId,
-          completedBy: {
-            connect: usersId.map(userId => ({ id: userId })),
-            disconnect: usersToDisconnect.map(userId => ({ id: userId }))
-          }
+          ...data,
+          users: Array.isArray(usersIDsToConnect) ? {
+            connect: usersIDsToConnect.map((userId) => ({ id: userId })),
+            disconnect: usersIDsToDisconnect,
+          } : undefined,
+          badges: Array.isArray(badgesToConnect) ? {
+            connect: badgesToConnect.map((badgeId) => ({ id: badgeId })),
+            disconnect: badgesIDsToDisconnect
+          } : undefined
         }
       });
-    })
-    return
+
+      return mission;
+    } catch (error) {
+      throw new Error('Error updating mission')
+    }
+  }
+
+  async missionCompletion(missionId: string, data: string[]): Promise<void> {
+    try {
+      await prisma.$transaction(async (prisma) => {
+        const mission = await prisma.mission.findUnique({
+          where: {
+            id: missionId,
+          },
+          include: {
+            completedBy: {
+              select: {
+                id: true,
+              }
+            },
+            users: {
+              select: {
+                id: true,
+              }
+            },
+            badges: {
+              select: {
+                id: true,
+              }
+            }
+          }
+        })
+
+        if (!mission) {
+          throw new Error('Mission not found')
+        }
+
+        const usersId = data
+
+        const currentCompletedByIds = mission.completedBy.map(user => user.id);
+        const usersToDisconnect = currentCompletedByIds.filter(id => !usersId.includes(id));
+        const usersToReward = usersId.filter(id => !currentCompletedByIds.includes(id));
+
+        await Promise.all(usersToReward.map(async (userId) => {
+          await prisma.user.update({
+            where: { id: userId },
+            data: {
+              gold: { increment: mission.gold },
+              xp: { increment: mission.xp },
+              badges: {
+                connect: mission.badges.map(badge => ({ id: badge.id }))
+              },
+            }
+          })
+        }))
+
+        await prisma.mission.update({
+          where: { id: missionId },
+          data: {
+            completedByIDs: usersId,
+            completedBy: {
+              connect: usersId.map(userId => ({ id: userId })),
+              disconnect: usersToDisconnect.map(userId => ({ id: userId }))
+            }
+          }
+        });
+      })
+      return
+    } catch (error) {
+      throw new Error('Error completing mission')
+    }
   }
 }

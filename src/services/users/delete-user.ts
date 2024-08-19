@@ -11,6 +11,5 @@ export class DeleteUserService {
     } catch (error) {
       throw new ResourceNotFound('Usuário não encontrado')
     }
-
   }
 }
