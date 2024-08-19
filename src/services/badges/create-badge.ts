@@ -8,7 +8,9 @@ export interface CreateBadgeData {
   title: string
   description: string
   companyId: string
-  image?: MultipartFile
+  image?: MultipartFile | null
+  classification: string
+  skillType: string
 }
 
 export class CreateBadgeService {
@@ -36,7 +38,9 @@ export class CreateBadgeService {
         title: data.title,
         description: data.description,
         companyId: data.companyId,
-        imageUrl: imageUrl || null
+        imageUrl: imageUrl || null,
+        classification: data.classification,
+        skillType: data.skillType
       })
       return badge
     } catch (error) {

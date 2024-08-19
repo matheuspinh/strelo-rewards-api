@@ -10,7 +10,13 @@ export async function updateBadge(request: FastifyRequest, reply: FastifyReply) 
     }),
     description: z.object({
       value: z.string().min(3),
-    })
+    }),
+    classification: z.object({
+      value: z.string().nonempty('Informe uma classificação para a conquista'),
+    }),
+    skillType: z.object({
+      value: z.string().nonempty('Informe um tipo de habilidade para a conquista'),
+    }),
   }).passthrough()
 
   const updateBadgeParamsSchema = z.object({
@@ -30,7 +36,9 @@ export async function updateBadge(request: FastifyRequest, reply: FastifyReply) 
   await updateBadgeService.execute(badgeId, {
     title: title.value,
     description: description.value,
-    image: image || null
+    image: image || null,
+    classification: data.classification.value,
+    skillType: data.skillType.value,
   })
 
   return reply.status(204).send()
