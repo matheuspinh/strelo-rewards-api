@@ -1,5 +1,5 @@
 import { Prisma, User } from '@prisma/client'
-import { UsersRepository } from '../users-repository'
+import { UsersRepository, UserWithAssociations } from '../users-repository'
 import { randomUUID } from 'node:crypto'
 
 export class FakeUsersRepository implements UsersRepository {
@@ -12,7 +12,7 @@ export class FakeUsersRepository implements UsersRepository {
       return null
     }
 
-    return user
+    return user as unknown as UserWithAssociations
   }
 
   async findByEmail(email: string) {
@@ -44,9 +44,10 @@ export class FakeUsersRepository implements UsersRepository {
       gold: 0,
       companyId: data.companyId || '1',
       role: data.role || 'user',
-      missionsIDs: [],
-      completedMissionsIDs: [],
-      badgesIDs: [],
+      missionsIDs: [] as string[],
+      completedMissionsIDs: [] as string[],
+      badgesIDs: [] as string[],
+      privilegesIDs: [] as string[],
     }
 
     this.items.push(user)

@@ -1,9 +1,10 @@
-import { Mission, Prisma } from "@prisma/client";
+import { Mission, Prisma, User } from "@prisma/client";
 import { MissionsRepository, MissionWithRelations } from "../missions-repository";
 import { randomUUID } from "crypto";
 
 export class FakeMissionsRepository implements MissionsRepository {
   public items: Mission[] = []
+  public users: User[] = []
 
   async create(data: Prisma.MissionUncheckedCreateInput): Promise<Mission> {
     const mission = {
@@ -68,5 +69,25 @@ export class FakeMissionsRepository implements MissionsRepository {
     this.items[missionIndex] = mission
 
     return Promise.resolve(this.items[missionIndex])
+  }
+
+  async missionCompletion(missionId: string, data: string[]): Promise<void> {
+    const missionIndex = this.items.findIndex((item) => item.id === missionId)
+
+    if (missionIndex === -1) {
+      throw new Error('Mission not found')
+    }
+
+    const mission = this.items[missionIndex]
+
+    const usersId = data
+
+    const currentCompletedByIds = mission.completedByIDs
+
+    mission.completedByIDs.push(...currentCompletedByIds)
+
+    this.items[missionIndex] = mission
+
+    return Promise.resolve()
   }
 }

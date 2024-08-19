@@ -49,11 +49,9 @@ export class UpdateMissionService {
         usersIDs: data.usersIDs || mission.usersIDs,
         badgesIDs: data.badgesIDs || mission.badgesIDs,
       })
+      return updatedMission
     } catch (error) {
       throw new ResourceNotFound('Error ao atualizar missão')
     }
-
-    return updatedMission
-
   }
 }
