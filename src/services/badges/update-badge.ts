@@ -7,6 +7,8 @@ export interface UpdateBadgeServiceRequest {
   title?: string
   description?: string
   image?: MultipartFile
+  classification?: string
+  skillType?: string
 }
 
 export class UpdateBadgeService {
@@ -33,6 +35,8 @@ export class UpdateBadgeService {
         title: data.title || badge.title,
         description: data.description || badge.description,
         imageUrl: image_url || badge.imageUrl,
+        classification: data.classification || badge.classification,
+        skillType: data.skillType || badge.skillType
       })
 
       return updatedBadge

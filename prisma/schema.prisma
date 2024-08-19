@@ -10,6 +10,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum skillType {
+  softskill
+  hardskill
+}
+
+enum badgeClassification {
+  bronze
+  silver
+  gold
+}
+
 model User {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   username     String
@@ -76,10 +87,12 @@ model Mission {
 }
 
 model Badge {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  description String
-  imageUrl    String? @map("image_url")
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  description    String
+  imageUrl       String? @map("image_url")
+  skillType      String  @default("softskill") @map("skill_type")
+  classification String  @default("bronze")
 
   companyId String  @map("company_id") @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
