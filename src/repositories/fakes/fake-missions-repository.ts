@@ -1,4 +1,4 @@
-import { Mission, Prisma, User } from "@prisma/client";
+import { Mission, missionStatus, Prisma, User } from "@prisma/client";
 import { MissionsRepository, MissionWithRelations } from "../missions-repository";
 import { randomUUID } from "crypto";
 
@@ -22,7 +22,8 @@ export class FakeMissionsRepository implements MissionsRepository {
       badges: [],
       users: [],
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      status: missionStatus.ongoing
     }
 
     this.items.push(mission)

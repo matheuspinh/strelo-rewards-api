@@ -26,5 +26,6 @@ export async function getUser(request: FastifyRequest, reply: FastifyReply) {
     badges: user.badges,
     missions: user.missions,
     privileges: user.privileges,
+    completedMissions: user.completedMissions,
   })
 }

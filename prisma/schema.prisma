@@ -15,6 +15,12 @@ enum skillType {
   hardskill
 }
 
+enum missionStatus {
+  ongoing
+  completed
+  canceled
+}
+
 enum badgeClassification {
   bronze
   silver
@@ -66,12 +72,13 @@ model Company {
 }
 
 model Mission {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
-  imageUrl    String? @map("image_url")
+  imageUrl    String?       @map("image_url")
   xp          Int
   gold        Int
+  status      missionStatus @default(ongoing)
 
   completedByIDs String[] @map("completed_by_ids") @db.ObjectId
   completedBy    User[]   @relation("CompletedMissions", fields: [completedByIDs], references: [id])
