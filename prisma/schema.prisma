@@ -39,20 +39,29 @@ model User {
   gold         Int      @default(0)
   role         String   @default("user")
 
+  // CompletedMissions relation
   completedMissionsIDs String[]  @map("completed_missions_ids") @db.ObjectId
   completedMissions    Mission[] @relation("CompletedMissions", fields: [completedMissionsIDs], references: [id])
 
+  // Company relation
   companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 
+  // Missions relation
   missionsIDs String[]  @map("missions_ids") @db.ObjectId
   missions    Mission[] @relation(fields: [missionsIDs], references: [id])
 
+  // Badges relation
   badgesIDs String[] @map("badges_ids") @db.ObjectId
   badges    Badge[]  @relation(fields: [badgesIDs], references: [id])
 
+  // Privileges relation
   privilegesIDs String[]    @map("privileges_ids") @db.ObjectId
   privileges    Privilege[] @relation(fields: [privilegesIDs], references: [id])
+
+  // Level relation
+  currentLevelID String? @map("current_level_id") @db.ObjectId
+  currentLevel   Level?  @relation("UserLevel", fields: [currentLevelID], references: [id])
 
   @@map("users")
 }
@@ -65,10 +74,16 @@ model Company {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  // Users relation
   users      User[]
+  // Missions relation
   missions   Mission[]
+  // Badges relation
   badges     Badge[]
+  // Privileges relation
   privileges Privilege[]
+  // Levels relation
+  levels     Level[]
 }
 
 model Mission {
@@ -80,15 +95,19 @@ model Mission {
   gold        Int
   status      missionStatus @default(ongoing)
 
+  // CompletedBy relation
   completedByIDs String[] @map("completed_by_ids") @db.ObjectId
   completedBy    User[]   @relation("CompletedMissions", fields: [completedByIDs], references: [id])
 
+  // Users relation
   usersIDs String[] @map("users_ids") @db.ObjectId
   users    User[]   @relation(fields: [usersIDs], references: [id])
 
+  // Company relation
   companyId String  @map("company_id") @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 
+  // Badges relation
   badgesIDs String[] @map("badges_ids") @db.ObjectId
   badges    Badge[]  @relation(fields: [badgesIDs], references: [id])
 }
@@ -101,15 +120,19 @@ model Badge {
   skillType      String  @default("softskill") @map("skill_type")
   classification String  @default("bronze")
 
+  // Company relation
   companyId String  @map("company_id") @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 
+  // Users relation
   earnedByIDs String[] @map("earned_by_ids") @db.ObjectId
   earnedBy    User[]   @relation(fields: [earnedByIDs], references: [id])
 
+  // Missions relation
   missionsIDs String[]  @map("missions_ids") @db.ObjectId
   missions    Mission[] @relation(fields: [missionsIDs], references: [id])
 
+  // Privileges relation
   privileges Privilege[]
 }
 
@@ -120,12 +143,36 @@ model Privilege {
   xp          Int    @default(0)
   gold        Int    @default(0)
 
+  // Badges relation
   requiredBadgeID String? @map("required_badges_ids") @db.ObjectId
   requiredBadge   Badge?  @relation(fields: [requiredBadgeID], references: [id])
 
+  // Company relation
   companyId String  @map("company_id") @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 
+  // Users relation
   usersIDs String[] @map("users_ids") @db.ObjectId
   users    User[]   @relation(fields: [usersIDs], references: [id])
+}
+
+model Level {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  softSkillsBadges Int    @map("soft_skills_badges")
+  hardSkillsBadges Int    @map("hard_skills_badges")
+  xpRequired       Int    @map("xp_required")
+  goldReward       Int    @default(0) @map("gold_reward")
+
+  // Self-relation to create an optional linked level progression
+  previousLevelId String? @db.ObjectId
+  previousLevel   Level?  @relation("LevelToLevel", fields: [previousLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  nextLevel       Level[] @relation("LevelToLevel")
+
+  // Users relation
+  users User[] @relation("UserLevel")
+
+  // Company relation
+  companyId String  @map("company_id") @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
 }
