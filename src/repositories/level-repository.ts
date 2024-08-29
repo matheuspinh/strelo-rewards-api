@@ -1,4 +1,4 @@
-import { Level, Prisma } from '@prisma/client'
+import { Badge, Level, Prisma } from '@prisma/client'
 
 export interface LevelWithRelations extends Level {
   users: {
@@ -13,7 +13,8 @@ export interface LevelWithRelations extends Level {
   previousLevel: {
     id: string
     title: string
-  } | null
+  } | null,
+  specificBadge: Badge | null
 }
 
 export interface LevelRepository {
