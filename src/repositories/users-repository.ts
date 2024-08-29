@@ -1,4 +1,5 @@
-import { Badge, Mission, Prisma, Privilege, User } from '@prisma/client'
+import { Badge, Level, Mission, Prisma, Privilege, User } from '@prisma/client'
+import { LevelWithRelations } from './level-repository';
 
 export type UserWithoutPassword = {
   id: string;
@@ -14,6 +15,8 @@ export type UserWithoutPassword = {
   companyId: string;
   missionsIDs: string[];
   badgesIDs: string[];
+  currentLevelID: string | null;
+  currentLevel: Level | null;
 }
 
 export type UserWithAssociations = UserWithoutPassword & {
@@ -21,6 +24,7 @@ export type UserWithAssociations = UserWithoutPassword & {
   missions: Mission[]
   privileges: Privilege[]
   completedMissions: Mission[]
+  currentLevel: LevelWithRelations
 }
 export interface UsersRepository {
   findById(userId: string): Promise<UserWithAssociations | null>
@@ -29,4 +33,5 @@ export interface UsersRepository {
   create(data: Prisma.UserUncheckedCreateInput): Promise<User>
   delete(userId: string): Promise<void>
   update(userId: string, data: Prisma.UserUncheckedUpdateInput): Promise<User>
+  level(userId: string, levelId: string): Promise<User>
 }
