@@ -27,5 +27,7 @@ export async function getUser(request: FastifyRequest, reply: FastifyReply) {
     missions: user.missions,
     privileges: user.privileges,
     completedMissions: user.completedMissions,
+    currentLevel: user.currentLevel,
+    nextLevel: user.currentLevel?.nextLevel[0] || null,
   })
 }

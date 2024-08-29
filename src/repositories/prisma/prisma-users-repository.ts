@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { UsersRepository, UserWithAssociations } from '../users-repository'
+import { disconnect } from 'node:process'
 
 export class PrismaUsersRepository implements UsersRepository {
   async findById(userId: string) {
@@ -25,6 +26,15 @@ export class PrismaUsersRepository implements UsersRepository {
           badges: true,
           completedMissions: true,
           privileges: true,
+          currentLevel: {
+            include: {
+              nextLevel: {
+                include: {
+                  specificBadge: true
+                }
+              }
+            }
+          },
         }
       })
 
@@ -70,6 +80,9 @@ export class PrismaUsersRepository implements UsersRepository {
           badgesIDs: true,
           completedMissions: true,
           missions: true,
+          currentLevelID: true,
+          currentLevel: true,
+          badges: true,
         }
       })
 
@@ -147,6 +160,22 @@ export class PrismaUsersRepository implements UsersRepository {
         data,
       })
 
+      return user
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
+  async level(userId: string, levelId: string) {
+    try {
+      const user = await prisma.user.update({
+        where: {
+          id: userId
+        },
+        data: {
+          currentLevelID: levelId,
+        }
+      })
       return user
     } catch (error: any) {
       throw new Error(error)
