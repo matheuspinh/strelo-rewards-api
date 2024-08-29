@@ -27,8 +27,12 @@ export class PrismaUsersRepository implements UsersRepository {
           completedMissions: true,
           privileges: true,
           currentLevel: {
-            select: {
-              nextLevel: true,
+            include: {
+              nextLevel: {
+                include: {
+                  specificBadge: true
+                }
+              }
             }
           },
         }

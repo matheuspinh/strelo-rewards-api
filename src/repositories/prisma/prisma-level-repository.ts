@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { LevelRepository } from "../level-repository";
 import { Level, Prisma } from "@prisma/client";
 import { ResourceNotFound } from "@/services/errors/general-errors";
-import { connect } from "http2";
 
 export class PrismaLevelRepository implements LevelRepository {
   async create(data: Prisma.LevelUncheckedCreateInput) {
@@ -10,7 +9,6 @@ export class PrismaLevelRepository implements LevelRepository {
       const level = await prisma.level.create({
         data: {
           ...data,
-
         }
       })
       return level
@@ -34,7 +32,12 @@ export class PrismaLevelRepository implements LevelRepository {
           softSkillsBadges: true,
           xpRequired: true,
           previousLevelId: true,
+          specificBadgeId: true,
           companyId: true,
+          goldHardSkills: true,
+          goldSoftSkills: true,
+          silverHardSkills: true,
+          silverSoftSkills: true,
           nextLevel: {
             select: {
               id: true,
@@ -53,7 +56,8 @@ export class PrismaLevelRepository implements LevelRepository {
               username: true,
               avatarUrl: true
             }
-          }
+          },
+          specificBadge: true
         }
       })
 
@@ -73,6 +77,7 @@ export class PrismaLevelRepository implements LevelRepository {
         },
         include: {
           nextLevel: true,
+          specificBadge: true,
         }
       })
 
@@ -93,7 +98,7 @@ export class PrismaLevelRepository implements LevelRepository {
             select: {
               id: true
             }
-          }
+          },
         }
       })
 
@@ -111,7 +116,7 @@ export class PrismaLevelRepository implements LevelRepository {
           data: {
             users: {
               disconnect: users.map(user => ({ id: user.id }))
-            }
+            },
           }
         }),
         prisma.level.delete({
@@ -127,12 +132,33 @@ export class PrismaLevelRepository implements LevelRepository {
 
   async update(levelId: string, data: Prisma.LevelUncheckedUpdateInput) {
     try {
+
+      const { previousLevelId, specificBadgeId } = data
+
+      const updateData: Prisma.LevelUpdateInput = {
+        ...data,
+        previousLevel: previousLevelId
+          ? { connect: { id: previousLevelId as string } }
+          : undefined,
+        specificBadge: specificBadgeId
+          ? { connect: { id: specificBadgeId as string } }
+          : undefined,
+      };
+
+      if (data.previousLevelId) {
+        delete updateData.previousLevel;
+      }
+      if (data.specificBadgeId) {
+        delete updateData.specificBadge;
+      }
+
       const updatedLevel = await prisma.level.update({
         where: {
           id: levelId,
         },
-        data,
-      })
+        data: updateData
+      }
+      )
 
       return updatedLevel
     } catch (error: any) {
