@@ -10,6 +10,11 @@ export async function createLevel(request: FastifyRequest, reply: FastifyReply) 
     hardSkillsBadges: z.number(),
     softSkillsBadges: z.number(),
     previousLevelId: z.string().optional(),
+    goldHardSkills: z.number(),
+    goldSoftSkills: z.number(),
+    silverHardSkills: z.number(),
+    silverSoftSkills: z.number(),
+    specificBadgeId: z.string().optional(),
   })
 
   const { companyId } = request.user
@@ -27,7 +32,12 @@ export async function createLevel(request: FastifyRequest, reply: FastifyReply) 
     hardSkillsBadges: data.hardSkillsBadges,
     softSkillsBadges: data.softSkillsBadges,
     previousLevelId: data.previousLevelId || undefined,
+    goldHardSkills: data.goldHardSkills,
+    goldSoftSkills: data.goldSoftSkills,
+    silverHardSkills: data.silverHardSkills,
+    silverSoftSkills: data.silverSoftSkills,
+    specificBadgeId: data.specificBadgeId || undefined,
   })
 
-  return reply.status(200).send()
+  return reply.status(200).send(level)
 }
