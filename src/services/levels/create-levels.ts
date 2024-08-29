@@ -10,6 +10,11 @@ export interface CreateLevelData {
   hardSkillsBadges: number
   softSkillsBadges: number
   previousLevelId: string | undefined
+  goldHardSkills: number
+  goldSoftSkills: number
+  silverHardSkills: number
+  silverSoftSkills: number
+  specificBadgeId: string | undefined
 }
 
 export class CreateLevelService {
@@ -18,7 +23,6 @@ export class CreateLevelService {
   async execute(data: CreateLevelData) {
     try {
       const company = await this.companiesRepository.findById(data.companyId)
-      console.log(data)
       if (!company) {
         throw new ResourceNotFound('Company not found')
       }
@@ -30,7 +34,12 @@ export class CreateLevelService {
         companyId: data.companyId,
         hardSkillsBadges: data.hardSkillsBadges,
         softSkillsBadges: data.softSkillsBadges,
-        previousLevelId: data.previousLevelId
+        previousLevelId: data.previousLevelId,
+        goldHardSkills: data.goldHardSkills,
+        goldSoftSkills: data.goldSoftSkills,
+        silverHardSkills: data.silverHardSkills,
+        silverSoftSkills: data.silverSoftSkills,
+        specificBadgeId: data.specificBadgeId
       })
 
       return level

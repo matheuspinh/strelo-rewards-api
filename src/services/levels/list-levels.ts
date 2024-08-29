@@ -20,6 +20,7 @@ export class ListLevelsService {
       if (error instanceof ResourceNotFound) {
         throw error
       }
+      console.log(error)
       throw new Error('Error listing levels')
     }
   }
