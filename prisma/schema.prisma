@@ -134,6 +134,9 @@ model Badge {
 
   // Privileges relation
   privileges Privilege[]
+
+  // Levels relation
+  levels Level[]
 }
 
 model Privilege {
@@ -159,15 +162,23 @@ model Privilege {
 model Level {
   id               String @id @default(auto()) @map("_id") @db.ObjectId
   title            String
-  softSkillsBadges Int    @map("soft_skills_badges")
-  hardSkillsBadges Int    @map("hard_skills_badges")
-  xpRequired       Int    @map("xp_required")
+  softSkillsBadges Int    @default(0) @map("soft_skills_badges")
+  hardSkillsBadges Int    @default(0) @map("hard_skills_badges")
+  goldSoftSkills   Int    @default(0) @map("gold_soft_skills")
+  goldHardSkills   Int    @default(0) @map("gold_hard_skills")
+  silverSoftSkills Int    @default(0) @map("silver_soft_skills")
+  silverHardSkills Int    @default(0) @map("silver_hard_skills")
+  xpRequired       Int    @default(0) @map("xp_required")
   goldReward       Int    @default(0) @map("gold_reward")
 
   // Self-relation to create an optional linked level progression
   previousLevelId String? @db.ObjectId
   previousLevel   Level?  @relation("LevelToLevel", fields: [previousLevelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   nextLevel       Level[] @relation("LevelToLevel")
+
+  // Specific Badge
+  specificBadgeId String? @map("specific_badge_id") @db.ObjectId
+  specificBadge   Badge?  @relation(fields: [specificBadgeId], references: [id])
 
   // Users relation
   users User[] @relation("UserLevel")
