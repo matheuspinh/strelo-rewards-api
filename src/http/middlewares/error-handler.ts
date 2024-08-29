@@ -27,7 +27,5 @@ export const errorHandler = (error: Error, _: FastifyRequest, reply: FastifyRepl
   if (error instanceof DatabaseError) {
     return reply.status(500).send({ message: error.message });
   }
-
-  console.log(error);
-  return reply.status(500).send({ message: 'Erro ao processar solicitação' });
+  return reply.status(500).send({ message: error });
 }

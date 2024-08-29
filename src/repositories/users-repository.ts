@@ -1,4 +1,5 @@
 import { Badge, Level, Mission, Prisma, Privilege, User } from '@prisma/client'
+import { LevelWithRelations } from './level-repository';
 
 export type UserWithoutPassword = {
   id: string;
@@ -23,7 +24,7 @@ export type UserWithAssociations = UserWithoutPassword & {
   missions: Mission[]
   privileges: Privilege[]
   completedMissions: Mission[]
-  currentLevel: Level
+  currentLevel: LevelWithRelations
 }
 export interface UsersRepository {
   findById(userId: string): Promise<UserWithAssociations | null>
