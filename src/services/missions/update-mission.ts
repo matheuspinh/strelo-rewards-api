@@ -12,6 +12,7 @@ export interface UpdateMissionServiceRequest {
   completedByIDs?: string[]
   usersIDs?: string[]
   badgesIDs?: string[]
+  category?: string
 }
 
 export class UpdateMissionService {
@@ -48,6 +49,7 @@ export class UpdateMissionService {
         completedByIDs: data.completedByIDs || mission.completedByIDs,
         usersIDs: data.usersIDs || mission.usersIDs,
         badgesIDs: data.badgesIDs || mission.badgesIDs,
+        category: data.category || mission.category
       })
       return updatedMission
     } catch (error) {

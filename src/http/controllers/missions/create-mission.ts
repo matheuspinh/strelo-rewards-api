@@ -23,11 +23,14 @@ export async function createMission(request: FastifyRequest, reply: FastifyReply
     participants: z.object({
       value: z.string(),
     }),
+    category: z.object({
+      value: z.string(),
+    }),
   }).passthrough()
 
   const data = createMissionBody.parse(request.body)
 
-  const { title, description, xp, gold, participants, badges } = data
+  const { title, description, xp, gold, participants, badges, category } = data
 
   const image = data.image as MultipartFile
 
@@ -43,7 +46,8 @@ export async function createMission(request: FastifyRequest, reply: FastifyReply
     gold: Number(gold.value),
     badgesIDs: JSON.parse(badges.value),
     usersIDs: JSON.parse(participants.value),
-    image: image || null
+    image: image || null,
+    category: category.value,
   })
 
   return reply.status(201).send(mission)

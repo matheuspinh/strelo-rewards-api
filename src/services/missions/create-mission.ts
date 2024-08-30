@@ -14,6 +14,7 @@ export interface CreateMissionData {
   badgesIDs: string[]
   usersIDs: string[]
   image?: MultipartFile
+  category: string
 }
 
 export class CreateMissionService {
@@ -49,7 +50,8 @@ export class CreateMissionService {
         companyId: data.companyId,
         badgesIDs: data.badgesIDs,
         usersIDs: data.usersIDs,
-        imageUrl: imageUrl || null
+        imageUrl: imageUrl || null,
+        category: data.category
       })
       return mission
     } catch (error) {
