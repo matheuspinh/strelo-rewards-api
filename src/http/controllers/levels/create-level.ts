@@ -21,8 +21,6 @@ export async function createLevel(request: FastifyRequest, reply: FastifyReply) 
 
   const data = createLevelBody.parse(request.body)
 
-  console.log(request.body)
-
   const service = makeCreateLevelService()
   const level = await service.execute({
     companyId,

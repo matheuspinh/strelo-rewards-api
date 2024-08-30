@@ -7,6 +7,7 @@ export class GetMissionService {
   async execute(missionId: string) {
     try {
       const mission = await this.missionsRepository.findById(missionId)
+
       if (!mission) {
         throw new ResourceNotFound('Missão não encontrada')
       }
