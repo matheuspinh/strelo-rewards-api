@@ -23,6 +23,9 @@ export async function updateMission(request: FastifyRequest, reply: FastifyReply
     participants: z.object({
       value: z.string(),
     }),
+    category: z.object({
+      value: z.string(),
+    }),
   }).passthrough()
 
   const updateMissionParamsSchema = z.object({
@@ -33,7 +36,7 @@ export async function updateMission(request: FastifyRequest, reply: FastifyReply
 
   const data = updateMissionBodySchema.parse(request.body)
 
-  const { title, description, xp, gold, participants, badges } = data
+  const { title, description, xp, gold, participants, badges, category } = data
 
   const image = data.image as MultipartFile
 
@@ -46,7 +49,8 @@ export async function updateMission(request: FastifyRequest, reply: FastifyReply
     gold: Number(gold.value),
     badgesIDs: JSON.parse(badges.value),
     usersIDs: JSON.parse(participants.value),
-    image: image || null
+    image: image || null,
+    category: category.value,
   })
 
   return reply.status(204).send()
